@@ -5,7 +5,7 @@ const App = () => {
   const [goldMedal, setGoldMedal] = useState(0);
   const [silverMedal, setSilverMedal] = useState(0);
   const [coperMedal, setCoperMedal] = useState(0);
-  const [nationList, setNationLis] = useState([]);
+  const [nationList, setNationList] = useState([]);
   const newNation = {
     id: Date.now(),
     name: nationName,
@@ -36,7 +36,7 @@ const App = () => {
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
-
+    console.log(nationList);
     const data = e.nativeEvent.submitter;
 
     if (data.value === "addBtn") {
@@ -47,28 +47,39 @@ const App = () => {
 
       if (
         nationList.some((e) => {
-          return newNation.name === e.nationName;
+          return newNation.name === e.name;
         })
       ) {
         alert("이미 존재하는 국가명 입니다.");
+        return;
       }
-      setNationLis([...nationList, newNation]);
+
+      setNationList([...nationList, newNation]);
       console.log("nationList", nationList);
       return;
     }
 
     if (data.value === "updateBtn") {
+      if (
+        nationList.some((e) => {
+          return newNation.name === e.name;
+        })
+      ) {
+        nationList.map((e) => {
+          return newNation;
+        });
+      } else {
+        alert("존재하지 않는 국가명 입니다.");
+      }
     }
   };
 
   const deleteBtnHandler = (selectedNation) => {
     const res = nationList.filter((e) => {
-      return selectedNation.id !== e.id;
+      if (e.id !== selectedNation.id) return e;
     });
     setNationList(res);
   };
-
-  console.log(newNation.guem);
 
   return (
     <div className="main">
@@ -94,21 +105,21 @@ const App = () => {
                 </td>
                 <td>
                   <input
-                    type="text"
+                    type="number"
                     value={+goldMedal}
                     onChange={newGoldMedal}
                   ></input>
                 </td>
                 <td>
                   <input
-                    type="text"
+                    type="number"
                     value={+silverMedal}
                     onChange={newSilverMedal}
                   ></input>
                 </td>
                 <td>
                   <input
-                    type="text"
+                    type="number"
                     value={+coperMedal}
                     onChange={newCoperMedal}
                   ></input>
@@ -116,24 +127,10 @@ const App = () => {
               </tr>
             </tbody>
           </table>
-          <button
-            type="submit"
-            value="addBtn"
-            name="action"
-            onSubmit={(e) => {
-              //shit
-              e.preventDefault();
-              console.log(e.nativeEvent.submitter.value);
-            }}
-          >
+          <button type="submit" value="addBtn" name="action">
             국가 추가
           </button>
-          <button
-            type="submit"
-            value="updateBtn"
-            name="action"
-            onSubmit={onSubmitHandler}
-          >
+          <button type="submit" value="updateBtn" name="action">
             업데이트
           </button>
         </form>
@@ -149,13 +146,17 @@ const App = () => {
           </thead>
           <tbody>
             {nationList.map((e) => {
-              <tr key={e.id}>
-                <td>{e.nationName}</td>
-                <td>{e.geum}</td>
-                <td>{e.silver}</td>
-                <td>{e.dong}</td>
-              </tr>;
-              <button onClick={deleteBtnHandler} 삭제></button>;
+              return (
+                <>
+                  <tr key={e.id}>
+                    <td>{e.nationName}</td>
+                    <td>{e.geum}</td>
+                    <td>{e.silver}</td>
+                    <td>{e.dong}</td>
+                  </tr>
+                  <button onClick={() => deleteBtnHandler(e)}>삭제</button>
+                </>
+              );
             })}
           </tbody>
         </table>
